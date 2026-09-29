@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marca Fintide</title>
+<!-- Generado por scripts/generar-guia.mjs. No se edita a mano. -->
+<link rel="icon" href="../iconos/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap">
+<style>
+  @font-face { font-family: "Jakarta local"; font-weight: 600; src: url("../tipografia/jakarta-600.woff") format("woff"); }
+  @font-face { font-family: "Jakarta local"; font-weight: 800; src: url("../tipografia/jakarta-800.woff") format("woff"); }
+  :root {
+    --tinta: #182424;
+    --tenue: #607373;
+    --fondo: #F7FAFA;
+    --panel: #FFFFFF;
+    --borde: #DCE7E7;
+    --marca: #0D5152;
+    --accion: #F27457;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--tinta);
+    font: 400 16px/1.6 "Plus Jakarta Sans", "Jakarta local", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  header { background: linear-gradient(135deg, #0D5152 0%, #083536 55%, #0D5152 100%); color: #fff; padding: 56px 16px 64px; }
+  header .contenido, main { max-width: 1040px; margin: 0 auto; }
+  header img { height: 56px; width: auto; display: block; }
+  header p { max-width: 560px; margin: 24px 0 0; color: #E0F2F2; }
+  main { padding: 0 16px 80px; }
+  h2 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em; color: var(--marca); margin: 56px 0 8px; }
+  h3 { font-weight: 600; font-size: 1rem; margin: 28px 0 8px; }
+  p.uso { color: var(--tenue); margin: 0 0 16px; max-width: 680px; }
+  .fila { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .lamina { border-radius: 0.875rem; padding: 32px; display: grid; place-items: center; min-height: 160px;
+    box-shadow: 0 1px 2px rgb(13 81 82 / 6%), 0 1px 3px rgb(13 81 82 / 4%); border: 1px solid var(--borde); }
+  .lamina img { max-width: 100%; height: 48px; width: auto; }
+  .lamina.oscura { background: var(--marca); border-color: transparent; }
+  .lamina.clara { background: var(--panel); }
+  .pie { font-size: 0.8125rem; color: var(--tenue); margin-top: 8px; }
+  .escala { display: grid; grid-template-columns: repeat(var(--pasos), minmax(0, 1fr)); border-radius: 0.875rem; overflow: hidden; box-shadow: 0 1px 2px rgb(13 81 82 / 6%), 0 1px 3px rgb(13 81 82 / 4%); }
+  .muestra { padding: 36px 12px 12px; display: flex; flex-direction: column; font-size: 0.75rem; min-width: 0; }
+  .muestra b { font-weight: 600; }
+  .muestra span { font-variant-numeric: tabular-nums; opacity: 0.85; }
+  .degradados { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .degradados div { height: 120px; border-radius: 0.875rem; color: #fff; padding: 12px; font-size: 0.8125rem; font-weight: 600; display: flex; align-items: flex-end; }
+  .iconos { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+  .iconos figure { margin: 0; text-align: center; font-size: 0.75rem; color: var(--tenue); }
+  .iconos img { display: block; margin: 0 auto 6px; image-rendering: auto; }
+  .tipo { background: var(--panel); border: 1px solid var(--borde); border-radius: 0.875rem; padding: 24px; }
+  .tipo .grande { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--marca); }
+  .tipo .medio { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin-top: 12px; }
+  .tipo .cifra { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.25rem; margin-top: 12px; }
+  .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .fotos figure { margin: 0; }
+  .fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.5rem; display: block; }
+  .fotos figcaption { font-size: 0.75rem; color: var(--tenue); margin-top: 4px; overflow-wrap: anywhere; }
+  .tarjetas img { aspect-ratio: 1200 / 630; }
+  @media (max-width: 720px) { .escala { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  code { font-size: 0.875em; background: #F2FAFA; padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--marca); }
+</style>
+</head>
+<body>
+<header><div class="contenido">
+  <img src="../logotipo/logotipo-fondo-oscuro.svg" alt="Fintide">
+  <p>La identidad de Fintide en una página: logotipo, color, tipografía e imagen. La fuente de todo está en este repositorio; esta guía se genera a partir de ella.</p>
+</div></header>
+<main>
+
+<h2>Logotipo</h2>
+<p class="uso">El símbolo va a la izquierda y el nombre al lado. Sobre fondo oscuro, cinta blanca y nombre blanco; sobre fondo claro, la variante con la cinta en verde azulado y el nombre en <code>teal-900</code>. No se rediseña, no se recolorea y no se le pone el punto coral que tenía antes.</p>
+<div class="fila">
+  <div><div class="lamina oscura"><img src="../logotipo/logotipo-fondo-oscuro.svg" alt="Logotipo sobre fondo oscuro"></div><div class="pie"><code>logotipo/logotipo-fondo-oscuro.svg</code></div></div>
+  <div><div class="lamina clara"><img src="../logotipo/logotipo-fondo-claro.svg" alt="Logotipo sobre fondo claro"></div><div class="pie"><code>logotipo/logotipo-fondo-claro.svg</code></div></div>
+</div>
+
+<h3>Símbolo e iconos</h3>
+<p class="uso">A 48 px y menos va la versión aplanada, sobre baldosa verde azulada: a esa medida el cruce translúcido de las cintas es una mancha. El porqué está en <a href="../docs/simbolo.md">docs/simbolo.md</a>.</p>
+<div class="iconos">
+  <figure><img src="../simbolo/simbolo-fondo-claro.png" height="96" alt=""><code>simbolo-fondo-claro.png</code></figure>
+  <figure><img src="../iconos/icono-192.png" width="96" height="96" alt=""><code>icono-192.png</code></figure>
+  <figure><img src="../iconos/apple-icon-180.png" width="60" height="60" alt=""><code>apple-icon-180.png</code></figure>
+  <figure><img src="../iconos/icon-32.png" width="32" height="32" alt=""><code>icon-32.png</code></figure>
+</div>
+
+<h2>Color</h2>
+<h3>coral</h3><p class="uso">El color de la acción. Se reserva para lo que se pulsa: si tiñe también encabezados y bordes, deja de señalar dónde hacer clic.</p><div class="escala" style="--pasos:9"><div class="muestra" style="background:#FEF3F0;color:#182424"><b>coral-50</b><span>#FEF3F0</span></div><div class="muestra" style="background:#FCE3DC;color:#182424"><b>coral-100</b><span>#FCE3DC</span></div><div class="muestra" style="background:#FFD2C5;color:#182424"><b>coral-200</b><span>#FFD2C5</span></div><div class="muestra" style="background:#FFA590;color:#182424"><b>coral-300</b><span>#FFA590</span></div><div class="muestra" style="background:#F98D72;color:#182424"><b>coral-400</b><span>#F98D72</span></div><div class="muestra" style="background:#F27457;color:#FFFFFF"><b>coral-500</b><span>#F27457</span></div><div class="muestra" style="background:#E05A3E;color:#FFFFFF"><b>coral-600</b><span>#E05A3E</span></div><div class="muestra" style="background:#C2472E;color:#FFFFFF"><b>coral-700</b><span>#C2472E</span></div><div class="muestra" style="background:#A8452F;color:#FFFFFF"><b>coral-900</b><span>#A8452F</span></div></div>
+<h3>teal</h3><p class="uso">El verde azulado corporativo. teal-900 (#0D5152) es la tinta de marca: el nombre sobre fondo claro, la cinta del símbolo en su variante clara, el tinte de las sombras.</p><div class="escala" style="--pasos:8"><div class="muestra" style="background:#F2FAFA;color:#182424"><b>teal-50</b><span>#F2FAFA</span></div><div class="muestra" style="background:#E0F2F2;color:#182424"><b>teal-100</b><span>#E0F2F2</span></div><div class="muestra" style="background:#C2E5E5;color:#182424"><b>teal-200</b><span>#C2E5E5</span></div><div class="muestra" style="background:#A0CDCD;color:#182424"><b>teal-300</b><span>#A0CDCD</span></div><div class="muestra" style="background:#14B8B8;color:#FFFFFF"><b>teal-500</b><span>#14B8B8</span></div><div class="muestra" style="background:#03A6A6;color:#FFFFFF"><b>teal-600</b><span>#03A6A6</span></div><div class="muestra" style="background:#067F80;color:#FFFFFF"><b>teal-700</b><span>#067F80</span></div><div class="muestra" style="background:#0D5152;color:#FFFFFF"><b>teal-900</b><span>#0D5152</span></div></div>
+<h3>slate</h3><p class="uso">El neutro. Mismo matiz que el verde azulado, muy desaturado: el gris de Tailwind tira a azul y junto al teal delata una plantilla sin tocar.</p><div class="escala" style="--pasos:11"><div class="muestra" style="background:#F7FAFA;color:#182424"><b>slate-50</b><span>#F7FAFA</span></div><div class="muestra" style="background:#EDF3F3;color:#182424"><b>slate-100</b><span>#EDF3F3</span></div><div class="muestra" style="background:#DCE7E7;color:#182424"><b>slate-200</b><span>#DCE7E7</span></div><div class="muestra" style="background:#C2D3D3;color:#182424"><b>slate-300</b><span>#C2D3D3</span></div><div class="muestra" style="background:#91A5A5;color:#FFFFFF"><b>slate-400</b><span>#91A5A5</span></div><div class="muestra" style="background:#607373;color:#FFFFFF"><b>slate-500</b><span>#607373</span></div><div class="muestra" style="background:#4B5C5C;color:#FFFFFF"><b>slate-600</b><span>#4B5C5C</span></div><div class="muestra" style="background:#3A4A4A;color:#FFFFFF"><b>slate-700</b><span>#3A4A4A</span></div><div class="muestra" style="background:#283535;color:#FFFFFF"><b>slate-800</b><span>#283535</span></div><div class="muestra" style="background:#182424;color:#FFFFFF"><b>slate-900</b><span>#182424</span></div><div class="muestra" style="background:#0E1717;color:#FFFFFF"><b>slate-950</b><span>#0E1717</span></div></div>
+<h3>Estados</h3>
+<p class="uso">Estados semánticos de cartera (al corriente, en aviso, en riesgo), para insignias y gráficas. No son colores de marca.</p>
+<div class="escala" style="--pasos:3"><div class="muestra" style="background:#ECFDF5;color:#182424"><b>exito-50</b><span>#ECFDF5</span></div><div class="muestra" style="background:#059669;color:#FFFFFF"><b>exito-600</b><span>#059669</span></div><div class="muestra" style="background:#047857;color:#FFFFFF"><b>exito-700</b><span>#047857</span></div></div><div style="height:8px"></div><div class="escala" style="--pasos:3"><div class="muestra" style="background:#FFFBEB;color:#182424"><b>aviso-50</b><span>#FFFBEB</span></div><div class="muestra" style="background:#D97706;color:#FFFFFF"><b>aviso-600</b><span>#D97706</span></div><div class="muestra" style="background:#B45309;color:#FFFFFF"><b>aviso-700</b><span>#B45309</span></div></div><div style="height:8px"></div><div class="escala" style="--pasos:3"><div class="muestra" style="background:#FEF2F2;color:#182424"><b>riesgo-50</b><span>#FEF2F2</span></div><div class="muestra" style="background:#DC2626;color:#FFFFFF"><b>riesgo-600</b><span>#DC2626</span></div><div class="muestra" style="background:#B91C1C;color:#FFFFFF"><b>riesgo-700</b><span>#B91C1C</span></div></div>
+
+<h3>Degradados</h3>
+<p class="uso">La capa líquida: superficies con brillo que dan al producto el acabado del sitio público. Van a 135°.</p>
+<div class="degradados">
+<div style="background:linear-gradient(135deg, #3F8A8C 0%, #03A6A6 55%, #0D5152 100%)">--liquido-teal</div>
+<div style="background:linear-gradient(135deg, #FFA590 0%, #F27457 50%, #D95F44 100%)">--liquido-coral</div>
+<div style="background:linear-gradient(135deg, #0D5152 0%, #083536 55%, #0D5152 100%)">--liquido-hondo</div>
+</div>
+
+<h2>Tipografía</h2>
+<p class="uso">Una sola familia, Plus Jakarta Sans. En el producto: 400 para el cuerpo, 500 para énfasis y 600 para títulos y el nombre. El 800 solo en los titulares de las tarjetas sociales. Cifras monetarias con números tabulares para que las columnas alineen.</p>
+<div class="tipo">
+  <div class="grande">Liquidez para tu equipo</div>
+  <div class="medio">Adelanto y crédito de nómina</div>
+  <p>Plus Jakarta Sans, en 400 para el cuerpo del texto. Se lee desde el primer instante y deja a los títulos el peso.</p>
+  <div class="cifra">$12,345.67</div>
+  <p>Las cifras monetarias van con números tabulares. Donde hay un costo va el CAT, con «Sin IVA» pegado a la cifra.</p>
+</div>
+
+<h2>Imagen</h2>
+<p class="uso">Abstracta: cintas y vidrio en verde azulado y coral. Sin personas, para que ninguna se lea como un cliente real.</p>
+<div class="fotos">
+<figure><img src="../fotografia/acceso-fondo.jpg" alt="" loading="lazy"><figcaption>acceso-fondo.jpg</figcaption></figure>
+<figure><img src="../fotografia/colab-calma.jpg" alt="" loading="lazy"><figcaption>colab-calma.jpg</figcaption></figure>
+<figure><img src="../fotografia/colab-heroe.jpg" alt="" loading="lazy"><figcaption>colab-heroe.jpg</figcaption></figure>
+<figure><img src="../fotografia/colab-panel.jpg" alt="" loading="lazy"><figcaption>colab-panel.jpg</figcaption></figure>
+<figure><img src="../fotografia/colaborador.jpg" alt="" loading="lazy"><figcaption>colaborador.jpg</figcaption></figure>
+<figure><img src="../fotografia/empresas.jpg" alt="" loading="lazy"><figcaption>empresas.jpg</figcaption></figure>
+<figure><img src="../fotografia/heroe.jpg" alt="" loading="lazy"><figcaption>heroe.jpg</figcaption></figure>
+<figure><img src="../fotografia/panel.jpg" alt="" loading="lazy"><figcaption>panel.jpg</figcaption></figure>
+<figure><img src="../fotografia/textura.jpg" alt="" loading="lazy"><figcaption>textura.jpg</figcaption></figure>
+<figure><img src="../fotografia/vacio.jpg" alt="" loading="lazy"><figcaption>vacio.jpg</figcaption></figure>
+</div>
+
+<h3>Tarjetas sociales</h3>
+<div class="fotos tarjetas">
+<figure><img src="../tarjetas-sociales/compuestas/colab-como-funciona-v1.jpg" alt="" loading="lazy"><figcaption>colab-como-funciona-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/colab-costo-v1.jpg" alt="" loading="lazy"><figcaption>colab-costo-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/colab-inicio-v1.jpg" alt="" loading="lazy"><figcaption>colab-inicio-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/colab-mi-empresa-v1.jpg" alt="" loading="lazy"><figcaption>colab-mi-empresa-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/colab-preguntas-v1.jpg" alt="" loading="lazy"><figcaption>colab-preguntas-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/empresas-contacto-v1.jpg" alt="" loading="lazy"><figcaption>empresas-contacto-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/empresas-inicio-v1.jpg" alt="" loading="lazy"><figcaption>empresas-inicio-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/empresas-nosotros-v1.jpg" alt="" loading="lazy"><figcaption>empresas-nosotros-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/empresas-precios-v1.jpg" alt="" loading="lazy"><figcaption>empresas-precios-v1.jpg</figcaption></figure>
+<figure><img src="../tarjetas-sociales/compuestas/empresas-servicios-v1.jpg" alt="" loading="lazy"><figcaption>empresas-servicios-v1.jpg</figcaption></figure>
+</div>
+
+<h2>Voz</h2>
+<p class="uso">En español y sin anglicismos, sin métricas ni testimonios inventados, con el CAT y «Sin IVA» donde hay un costo, y de tú. Las reglas completas, con su porqué, en <a href="../voz/redaccion.md">voz/redaccion.md</a>.</p>
+
+</main>
+</body>
+</html>

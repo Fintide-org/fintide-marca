@@ -1,0 +1,21 @@
+name: comprobar
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # La deriva con el monorepo no corre aquí: leer `Fintide-org/Fintide`
+      # desde este flujo necesita un token con acceso a ese repositorio. Se
+      # corre en local con FINTIDE_MONOREPO, y la salida lo dice.
+      - run: npm run comprobar -- --probar
