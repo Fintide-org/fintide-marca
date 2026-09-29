@@ -7,7 +7,10 @@ on:
 
 jobs:
   comprobar:
-    runs-on: ubuntu-latest
+    # ARM, como la plataforma donde se generan las piezas: ahí los PNG se
+    # comparan exactos. En x86 la ampliación de libvips redondea distinto
+    # (ver `igual()` en scripts/comprobar.mjs).
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

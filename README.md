@@ -45,6 +45,11 @@ npm run comprobar -- --probar   # y que cada regla sepa ponerse en rojo
 1. **Reproducibilidad.** Regenera todo en una copia y exige que cada pieza
    salga idéntica a la guardada: los PNG pixel a pixel (la compresión cambia
    de bytes entre macOS y Linux sin cambiar la imagen) y lo demás byte a byte.
+   Las piezas se generan en ARM (Apple Silicon) y el CI corre en
+   `macos-latest` para comparar exacto. En x86, la ampliación de libvips
+   redondea distinto los tres iconos que se agrandan (hasta 36 niveles en los
+   bordes): ahí se avisa como redondeo, no como rojo. Un retoque a mano rebasa
+   ese margen y sigue saliendo en rojo.
 2. **Deriva con el monorepo.** Los colores de `tokens.json` contra los de
    `apps/web/src/app/globals.css`, las piezas del símbolo y la tipografía
    contra las que sirve el producto, y el trazo de `nombre.svg` contra el de
