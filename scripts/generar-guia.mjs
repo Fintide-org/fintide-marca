@@ -146,7 +146,6 @@ ${Object.entries(estados.valores).map(([n, v]) => escala(n, v)).join('<div style
 <h3>Gráficas</h3>
 <p class="uso">${esc(t.grafica.$uso)}</p>
 ${escala('grafica', t.grafica.valores)}
-<p class="uso" style="margin-top:8px"><b>Pendiente:</b> ${esc(t.grafica.$pendiente)}</p>
 
 <h3>Degradados</h3>
 <p class="uso">${esc(t.degradado.$uso)}</p>
