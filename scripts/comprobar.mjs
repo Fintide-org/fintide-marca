@@ -61,7 +61,6 @@ const DERIVADAS = [
 
 /** Pieza de aquí → dónde vive la misma en el monorepo. */
 const EN_MONOREPO = {
-  'simbolo/original.jpg': 'assets/marca/simbolo-original.jpg',
   'simbolo/simbolo.png': 'apps/web/public/marca/simbolo.png',
   'simbolo/simbolo-fondo-claro.png': 'apps/web/public/marca/simbolo-fondo-claro.png',
   'iconos/favicon.ico': 'apps/web/src/app/favicon.ico',
