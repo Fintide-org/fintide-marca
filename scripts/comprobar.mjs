@@ -2,9 +2,12 @@
  * Comprueba que la marca guardada aquí es la que se puede reproducir y la que
  * usa el producto.
  *
- *   npm run comprobar                       # reproducibilidad
- *   FINTIDE_MONOREPO=../Fintide npm run comprobar   # y deriva con el monorepo
- *   npm run comprobar -- --probar           # y que cada regla sabe ponerse en rojo
+ *   npm run comprobar                                  # reproducibilidad
+ *   npm run comprobar -- --monorepo ../Fintide         # y deriva con el monorepo
+ *   npm run comprobar -- --probar                      # y que cada regla sepa ponerse en rojo
+ *
+ * Da el mismo resultado en macOS, Linux y Windows, en ARM y en x86: lo corre
+ * el CI en los tres sistemas en cada pull request.
  *
  * Dos preguntas, cada una con su regla:
  *
@@ -26,12 +29,12 @@
  */
 
 import { createHash } from 'node:crypto'
-import { cp, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import os from 'node:os'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import sharp from 'sharp'
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -74,38 +77,51 @@ const EN_MONOREPO = {
 const huella = async (archivo) => createHash('sha256').update(await readFile(archivo)).digest('hex')
 
 /**
- * Si dos piezas son la misma: `'igual'`, `'redondeo'` o `'distinta'`.
+ * Si dos piezas son la misma, comparando lo que se ve y no los bytes.
  *
- * Los PNG se comparan por lo que se ve —medidas, canales y cada valor de
- * pixel— y no por sus bytes: la compresión de sharp no escribe los mismos
- * bytes en macOS que en Linux aunque la imagen sea idéntica.
+ * La compresión de sharp no escribe los mismos bytes en macOS, Linux y
+ * Windows aunque la imagen sea idéntica, así que:
  *
- * Y la ampliación de libvips redondea distinto en x86 que en ARM: los tres
- * iconos que se generan agrandando el símbolo (192, 512 y maskable) salen con
- * diferencias de hasta 36 niveles en los bordes. Las piezas se generan en ARM
- * —Apple Silicon, y el CI corre en `macos-latest` para comparar exacto—; fuera
- * de ARM, una diferencia de hasta TOLERANCIA_X86 niveles se informa como
- * redondeo y no como rojo. Un retoque a mano de verdad la rebasa: la prueba de
- * `probar()` pinta un cuadro coral y sale en rojo en las dos arquitecturas.
+ * - un PNG se compara por medidas, canales y cada valor de pixel;
+ * - un SVG, como texto, pero con cada PNG incrustado (`data:image/png`)
+ *   sustituido por la huella de sus pixeles;
+ * - un ICO, entrada por entrada: medida declarada y pixeles de su PNG;
+ * - todo lo demás (CSS, HTML, fuentes), byte a byte.
  *
- * Todo lo que no es PNG (SVG, ICO, CSS, HTML, fuentes) se compara byte a byte.
+ * No hay tolerancia. La generación está hecha para dar los mismos pixeles en
+ * cualquier computadora (ver `baldosa()` en generar-simbolo.mjs), y si algún
+ * día una no los da, esto tiene que ponerse en rojo en esa, no taparlo.
  */
-const TOLERANCIA_X86 = 40
-
-async function igual(a, b) {
-  if (!a.endsWith('.png')) return (await huella(a)) === (await huella(b)) ? 'igual' : 'distinta'
-  const [x, y] = await Promise.all([a, b].map((f) => sharp(f).raw().toBuffer({ resolveWithObject: true })))
-  if (x.info.width !== y.info.width || x.info.height !== y.info.height || x.info.channels !== y.info.channels) {
-    return 'distinta'
-  }
-  if (x.data.equals(y.data)) return 'igual'
-  if (process.arch === 'arm64') return 'distinta'
-  let maxima = 0
-  for (let i = 0; i < x.data.length; i++) maxima = Math.max(maxima, Math.abs(x.data[i] - y.data[i]))
-  return maxima <= TOLERANCIA_X86 ? 'redondeo' : 'distinta'
+async function pixeles(buf) {
+  const { data, info } = await sharp(buf).raw().toBuffer({ resolveWithObject: true })
+  return `${info.width}x${info.height}x${info.channels}:${createHash('sha256').update(data).digest('hex')}`
 }
 
-const avisos = []
+async function huellaVisible(archivo) {
+  const datos = await readFile(archivo)
+  if (archivo.endsWith('.png')) return pixeles(datos)
+  if (archivo.endsWith('.svg')) {
+    let texto = datos.toString('utf8')
+    for (const m of [...texto.matchAll(/data:image\/png;base64,([A-Za-z0-9+/=]+)/g)]) {
+      texto = texto.replace(m[0], `png:${await pixeles(Buffer.from(m[1], 'base64'))}`)
+    }
+    return texto
+  }
+  if (archivo.endsWith('.ico')) {
+    const n = datos.readUInt16LE(4)
+    const partes = []
+    for (let i = 0; i < n; i++) {
+      const e = 6 + i * 16
+      const tam = datos.readUInt32LE(e + 8)
+      const ini = datos.readUInt32LE(e + 12)
+      partes.push(`${datos[e]}x${datos[e + 1]}:${await pixeles(datos.subarray(ini, ini + tam))}`)
+    }
+    return partes.join('|')
+  }
+  return createHash('sha256').update(datos).digest('hex')
+}
+
+const igual = async (a, b) => (await huellaVisible(a)) === (await huellaVisible(b))
 
 /** Regla 1. Devuelve la lista de piezas que no salen idénticas de sus guiones. */
 export async function reproducibilidad(raiz = RAIZ) {
@@ -115,15 +131,15 @@ export async function reproducibilidad(raiz = RAIZ) {
       if (entrada === '.git' || entrada === 'node_modules') continue
       await cp(path.join(raiz, entrada), path.join(copia, entrada), { recursive: true })
     }
-    await symlink(path.join(RAIZ, 'node_modules'), path.join(copia, 'node_modules'))
+    await symlink(path.join(RAIZ, 'node_modules'), path.join(copia, 'node_modules'), 'junction')
     for (const g of GUIONES) {
       execFileSync(process.execPath, [path.join(copia, 'scripts', g)], { stdio: 'ignore' })
     }
     const fallos = []
     for (const pieza of DERIVADAS) {
-      const r = await igual(path.join(raiz, pieza), path.join(copia, pieza))
-      if (r === 'distinta') fallos.push(`${pieza}: no sale igual de su guion (¿se editó a mano?)`)
-      if (r === 'redondeo' && raiz === RAIZ) avisos.push(`${pieza}: difiere solo por redondeo de ${process.arch}`)
+      if (!(await igual(path.join(raiz, pieza), path.join(copia, pieza)))) {
+        fallos.push(`${pieza}: no sale igual de su guion (¿se editó a mano?)`)
+      }
     }
     return fallos
   } finally {
@@ -160,7 +176,7 @@ export async function deriva(monorepo, raiz = RAIZ) {
   for (const [pieza, suya] of Object.entries(EN_MONOREPO)) {
     const destino = path.join(monorepo, suya)
     if (!existsSync(destino)) fallos.push(`${pieza}: el monorepo ya no tiene ${suya}`)
-    else if ((await igual(path.join(raiz, pieza), destino)) === 'distinta') {
+    else if (!(await igual(path.join(raiz, pieza), destino))) {
       fallos.push(`${pieza}: distinta de ${suya}`)
     }
   }
@@ -174,8 +190,24 @@ export async function deriva(monorepo, raiz = RAIZ) {
   return fallos
 }
 
+/** Un monorepo mínimo con las piezas, los colores y el trazo de esta marca. */
+async function monorepoDeMentira() {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'fintide-monorepo-'))
+  for (const [pieza, suya] of Object.entries(EN_MONOREPO)) {
+    await mkdir(path.dirname(path.join(dir, suya)), { recursive: true })
+    await cp(path.join(RAIZ, pieza), path.join(dir, suya))
+  }
+  const css = await readFile(path.join(RAIZ, 'color/tokens.css'), 'utf8')
+  await mkdir(path.join(dir, 'apps/web/src/app'), { recursive: true })
+  await writeFile(path.join(dir, 'apps/web/src/app/globals.css'), css)
+  const trazo = (await readFile(path.join(RAIZ, 'logotipo/nombre.svg'), 'utf8')).match(/ d="([^"]+)"/)[1]
+  await mkdir(path.join(dir, 'apps/web/src/components/marca'), { recursive: true })
+  await writeFile(path.join(dir, 'apps/web/src/components/marca/logotipo.tsx'), `const TRAZO_NOMBRE =\n  '${trazo}'\n`)
+  return dir
+}
+
 /** Estropea una copia a propósito y exige que cada regla lo vea. */
-async function probar(monorepo) {
+async function probar() {
   const resultados = []
   const copia = await mkdtemp(path.join(os.tmpdir(), 'fintide-marca-probar-'))
   try {
@@ -195,15 +227,26 @@ async function probar(monorepo) {
     // Lo legítimo pasa: el repositorio sin tocar.
     resultados.push(['el repositorio sin tocar pasa la reproducibilidad', (await reproducibilidad(RAIZ)).length === 0])
 
-    if (monorepo) {
-      // Un color movido aquí y no allá: la deriva tiene que verlo.
+    // La deriva se prueba contra un monorepo de mentira armado con esta misma
+    // marca, y no contra el real: el real puede estar atrasado a propósito
+    // —justo lo que la regla tiene que decir— y entonces el caso legítimo
+    // fallaría por el estado del mundo y no por la regla.
+    const falso = await monorepoDeMentira()
+    try {
+      resultados.push(['un monorepo al día no tiene deriva', (await deriva(falso, RAIZ)).length === 0])
+
       const ruta = path.join(copia, 'color/tokens.json')
       const t = JSON.parse(await readFile(ruta, 'utf8'))
       t.color.coral.valores['500'] = '#FF0000'
       await writeFile(ruta, JSON.stringify(t, null, 2))
-      const r2 = await deriva(monorepo, copia)
+      const r2 = await deriva(falso, copia)
       resultados.push(['un color distinto al del producto falla la deriva', r2.some((f) => f.includes('coral-500'))])
-      resultados.push(['el repositorio sin tocar no tiene deriva', (await deriva(monorepo, RAIZ)).length === 0])
+
+      await writeFile(path.join(falso, EN_MONOREPO['iconos/icono-192.png']), await readFile(path.join(RAIZ, 'iconos/icono-512.png')))
+      const r3 = await deriva(falso, RAIZ)
+      resultados.push(['un icono que el producto no actualizó falla la deriva', r3.some((f) => f.startsWith('iconos/icono-192.png'))])
+    } finally {
+      await rm(falso, { recursive: true, force: true })
     }
   } finally {
     await rm(copia, { recursive: true, force: true })
@@ -212,23 +255,26 @@ async function probar(monorepo) {
 }
 
 async function main() {
-  const monorepo = process.env.FINTIDE_MONOREPO ? path.resolve(process.env.FINTIDE_MONOREPO) : null
+  // `--monorepo <ruta>` se escribe igual en cualquier terminal; la variable de
+  // entorno se deja por compatibilidad, pero su sintaxis cambia de una a otra.
+  const i = process.argv.indexOf('--monorepo')
+  const indicado = i > -1 ? process.argv[i + 1] : process.env.FINTIDE_MONOREPO
+  const monorepo = indicado ? path.resolve(indicado) : null
+  if (monorepo && !existsSync(path.join(monorepo, 'apps/web/src/app/globals.css'))) {
+    console.error(`No parece el monorepo de Fintide: ${monorepo}`)
+    process.exit(2)
+  }
   let rojo = false
 
   console.log('==> Reproducibilidad')
   const r = await reproducibilidad()
-  const redondeo = new Set(avisos).size
-  if (r.length === 0 && redondeo === 0) console.log(`  [ok]   ${DERIVADAS.length} piezas salen idénticas de sus guiones`)
-  if (r.length === 0 && redondeo > 0) {
-    console.log(`  [ok]   ${DERIVADAS.length} piezas salen de sus guiones; ${redondeo} solo con redondeo de ${process.arch}`)
-  }
+  if (r.length === 0) console.log(`  [ok]   ${DERIVADAS.length} piezas salen idénticas de sus guiones (${process.platform} ${process.arch})`)
   for (const f of r) console.log(`  [rojo] ${f}`)
-  for (const f of [...new Set(avisos)]) console.log(`  [aviso] ${f}`)
   rojo ||= r.length > 0
 
   console.log('==> Deriva con el monorepo')
   if (!monorepo) {
-    console.log('  [sin revisar] falta FINTIDE_MONOREPO; esto no es un verde')
+    console.log('  [sin revisar] falta --monorepo <ruta>; esto no es un verde')
   } else {
     const d = await deriva(monorepo)
     if (d.length === 0) console.log(`  [ok]   colores, ${Object.keys(EN_MONOREPO).length} piezas y el trazo del nombre coinciden`)
@@ -238,7 +284,7 @@ async function main() {
 
   if (process.argv.includes('--probar')) {
     console.log('==> Las reglas contra sí mismas')
-    for (const [caso, bien] of await probar(monorepo)) {
+    for (const [caso, bien] of await probar()) {
       console.log(`  [${bien ? 'ok' : 'rojo'}]${bien ? '   ' : ' '}${caso}`)
       rojo ||= !bien
     }
@@ -247,4 +293,4 @@ async function main() {
   process.exit(rojo ? 1 : 0)
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main()
+if (import.meta.url === pathToFileURL(process.argv[1]).href) main()

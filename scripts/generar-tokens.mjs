@@ -12,7 +12,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -43,7 +43,7 @@ export async function tokensCss() {
   return lineas.join('\n')
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   await writeFile(path.join(RAIZ, 'color/tokens.css'), await tokensCss())
   console.log('  color/tokens.css')
 }

@@ -1,0 +1,9 @@
+# Las piezas de texto se comparan byte a byte con lo que generan los guiones,
+# que escriben finales de línea LF. Si Git las convirtiera a CRLF al clonar en
+# Windows, la comprobación se pondría en rojo sin que nadie hubiera tocado nada.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
