@@ -1,23 +1,14 @@
 # El símbolo de marca
 
-> Copiado de `docs/MARCA-SIMBOLO.md` del monorepo `Fintide` el 29 de septiembre
-> de 2026, con las rutas de este repositorio. Lo que se dice de dónde aparece
-> el símbolo en el producto (cabeceras, barra lateral, acceso) describe el
-> monorepo; las rutas de la tabla, las de aquí.
-
-El dueño entregó el símbolo: una **F** formada por dos cintas que se cruzan
-—una blanca y otra coral— con un remate en verde azulado arriba. Es el logotipo
-definitivo y no se rediseña. Este documento explica qué había que resolver para
-poder usarlo de verdad, y por qué se resolvió así.
-
-El original vive en `simbolo/original.jpg`. Todas las piezas
-salen de ese archivo con `npm run generar`, ninguna se
-dibuja a mano: volver a correr el guion no puede separar la marca del original.
-
-> El archivo llegó con extensión `.png` y por dentro es un JPEG. Se le puso la
-> extensión que le corresponde. Importa más de lo que parece: el ruido de
-> compresión del JPEG deja un par de cientos de motas sueltas alrededor del
-> símbolo, y el recorte tiene que descartarlas.
+> Este documento nació como `docs/MARCA-SIMBOLO.md` en el monorepo `Fintide`
+> y desde el 29 de septiembre de 2026 vive aquí, con las rutas de este
+> repositorio. Lo que dice de dónde aparece el símbolo en el producto
+> (cabeceras, barra lateral, acceso) describe el monorepo.
+>
+> Desde esa fecha los iconos con baldosa se componen en enteros en vez de
+> con libvips, para que salgan iguales en cualquier computadora (ver
+> `baldosa()` en `scripts/generar-simbolo.mjs`). Cambiaron unos niveles en
+> los bordes; a la vista, iguales.
 
 ## 1. El fondo estaba horneado
 

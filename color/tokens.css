@@ -51,4 +51,14 @@
   --liquido-teal: linear-gradient(135deg, #3F8A8C 0%, #03A6A6 55%, #0D5152 100%);
   --liquido-coral: linear-gradient(135deg, #FFA590 0%, #F27457 50%, #D95F44 100%);
   --liquido-hondo: linear-gradient(135deg, #0D5152 0%, #083536 55%, #0D5152 100%);
+  --grafica-principal: #0D5152;
+  --grafica-secundario: #03A6A6;
+  --grafica-claro: #A0CDCD;
+  --grafica-acento: #F27457;
+  --grafica-exito: #059669;
+  --grafica-aviso: #D97706;
+  --grafica-riesgo: #DC2626;
+  --grafica-neutro: #CBD5E1;
+  --grafica-malla: #E2E8F0;
+  --grafica-texto: #64748B;
 }

@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "description": "La identidad de marca de Fintide: símbolo, logotipo, color, tipografía, fotografía y voz.",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "generar": "node scripts/generar-simbolo.mjs && node scripts/generar-logotipo.mjs && node scripts/generar-tokens.mjs && node scripts/generar-guia.mjs",
     "comprobar": "node scripts/comprobar.mjs"
   },
   "devDependencies": {
+    "playwright": "^1.63.0",
     "sharp": "0.35.4"
   }
 }

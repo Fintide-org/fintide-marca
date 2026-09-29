@@ -39,6 +39,7 @@ export async function tokensCss() {
   for (const [nombre, valor] of Object.entries(t.degradado)) {
     if (!nombre.startsWith('$')) lineas.push(`  --${nombre}: ${valor};`)
   }
+  for (const [nombre, valor] of Object.entries(t.grafica.valores)) lineas.push(`  --grafica-${nombre}: ${valor};`)
   lineas.push('}', '')
   return lineas.join('\n')
 }

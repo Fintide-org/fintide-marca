@@ -181,6 +181,21 @@ export async function deriva(monorepo, raiz = RAIZ) {
     }
   }
 
+  const paleta = path.join(monorepo, 'apps/web/src/components/reportes/paleta.ts')
+  if (!existsSync(paleta)) fallos.push('reportes/paleta.ts: el monorepo ya no lo tiene')
+  else {
+    const ts = await readFile(paleta, 'utf8')
+    const suyos = new Map([...ts.matchAll(/^\s*([a-z]+):\s*'(#[0-9A-Fa-f]{6})'/gm)].map((m) => [m[1], m[2].toUpperCase()]))
+    for (const [nombre, hex] of Object.entries(tokens.grafica.valores)) {
+      const suyo = suyos.get(nombre)
+      if (suyo === undefined) fallos.push(`grafica.${nombre}: está aquí y no en reportes/paleta.ts`)
+      else if (suyo !== hex.toUpperCase()) fallos.push(`grafica.${nombre}: aquí ${hex}, en el producto ${suyo}`)
+    }
+    for (const nombre of suyos.keys()) {
+      if (!(nombre in tokens.grafica.valores)) fallos.push(`grafica.${nombre}: está en reportes/paleta.ts y no aquí`)
+    }
+  }
+
   const tsx = await readFile(path.join(monorepo, 'apps/web/src/components/marca/logotipo.tsx'), 'utf8')
   const trazoProducto = tsx.match(/const TRAZO_NOMBRE =\s*'([^']+)'/)?.[1]
   const trazoAqui = (await readFile(path.join(raiz, 'logotipo/nombre.svg'), 'utf8')).match(/ d="([^"]+)"/)?.[1]
@@ -203,6 +218,12 @@ async function monorepoDeMentira() {
   const trazo = (await readFile(path.join(RAIZ, 'logotipo/nombre.svg'), 'utf8')).match(/ d="([^"]+)"/)[1]
   await mkdir(path.join(dir, 'apps/web/src/components/marca'), { recursive: true })
   await writeFile(path.join(dir, 'apps/web/src/components/marca/logotipo.tsx'), `const TRAZO_NOMBRE =\n  '${trazo}'\n`)
+  const tokens = JSON.parse(await readFile(path.join(RAIZ, 'color/tokens.json'), 'utf8'))
+  await mkdir(path.join(dir, 'apps/web/src/components/reportes'), { recursive: true })
+  await writeFile(
+    path.join(dir, 'apps/web/src/components/reportes/paleta.ts'),
+    `export const COLORES = {\n${Object.entries(tokens.grafica.valores).map(([n, v]) => `  ${n}: '${v}',`).join('\n')}\n}\n`
+  )
   return dir
 }
 
@@ -277,7 +298,7 @@ async function main() {
     console.log('  [sin revisar] falta --monorepo <ruta>; esto no es un verde')
   } else {
     const d = await deriva(monorepo)
-    if (d.length === 0) console.log(`  [ok]   colores, ${Object.keys(EN_MONOREPO).length} piezas y el trazo del nombre coinciden`)
+    if (d.length === 0) console.log(`  [ok]   colores, gráficas, ${Object.keys(EN_MONOREPO).length} piezas y el trazo del nombre coinciden`)
     for (const f of d) console.log(`  [rojo] ${f}`)
     rojo ||= d.length > 0
   }

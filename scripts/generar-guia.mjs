@@ -40,6 +40,12 @@ async function main() {
   const t = JSON.parse(await readFile(path.join(RAIZ, 'color/tokens.json'), 'utf8'))
   const fotos = (await readdir(path.join(RAIZ, 'fotografia'))).filter((f) => f.endsWith('.jpg')).sort()
   const tarjetas = (await readdir(path.join(RAIZ, 'tarjetas-sociales/compuestas'))).filter((f) => f.endsWith('.jpg')).sort()
+  // Las capturas más recientes de los sitios: la carpeta `sitios-AAAA-MM-DD` con la fecha mayor.
+  const carpetasSitios = (await readdir(path.join(RAIZ, 'aplicaciones'))).filter((d) => /^sitios-\d{4}-\d{2}-\d{2}$/.test(d)).sort()
+  const ultima = carpetasSitios.at(-1)
+  const capturas = ultima
+    ? (await readdir(path.join(RAIZ, 'aplicaciones', ultima))).filter((f) => f.endsWith('-escritorio.jpg')).sort()
+    : []
   const { estados, ...marca } = t.color
 
   const html = `<!doctype html>
@@ -100,6 +106,7 @@ async function main() {
   .fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: ${t.radio.control}; display: block; }
   .fotos figcaption { font-size: 0.75rem; color: var(--tenue); margin-top: 4px; overflow-wrap: anywhere; }
   .tarjetas img { aspect-ratio: 1200 / 630; }
+  .capturas img { aspect-ratio: 3 / 4; object-position: top; }
   @media (max-width: 720px) { .escala { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   code { font-size: 0.875em; background: ${t.color.teal.valores['50']}; padding: 1px 5px; border-radius: 4px; }
   a { color: var(--marca); }
@@ -136,6 +143,11 @@ ${Object.entries(marca)
 <p class="uso">${esc(estados.$uso)}</p>
 ${Object.entries(estados.valores).map(([n, v]) => escala(n, v)).join('<div style="height:8px"></div>')}
 
+<h3>Gráficas</h3>
+<p class="uso">${esc(t.grafica.$uso)}</p>
+${escala('grafica', t.grafica.valores)}
+<p class="uso" style="margin-top:8px"><b>Pendiente:</b> ${esc(t.grafica.$pendiente)}</p>
+
 <h3>Degradados</h3>
 <p class="uso">${esc(t.degradado.$uso)}</p>
 <div class="degradados">
@@ -165,6 +177,12 @@ ${fotos.map((f) => `<figure><img src="../fotografia/${f}" alt="" loading="lazy">
 <div class="fotos tarjetas">
 ${tarjetas.map((f) => `<figure><img src="../tarjetas-sociales/compuestas/${f}" alt="" loading="lazy"><figcaption>${esc(f)}</figcaption></figure>`).join('\n')}
 </div>
+
+${ultima ? `<h2>La marca aplicada</h2>
+<p class="uso">Los dos sitios públicos tal como estaban el ${esc(ultima.slice(7))}, en escritorio. Las de celular y las de agosto están en <code>aplicaciones/</code>.</p>
+<div class="fotos capturas">
+${capturas.map((f) => `<figure><a href="../aplicaciones/${ultima}/${f}"><img src="../aplicaciones/${ultima}/${f}" alt="" loading="lazy"></a><figcaption>${esc(f.replace('-escritorio.jpg', ''))}</figcaption></figure>`).join('\n')}
+</div>` : ''}
 
 <h2>Voz</h2>
 <p class="uso">En español y sin anglicismos, sin métricas ni testimonios inventados, con el CAT y «Sin IVA» donde hay un costo, y de tú. Las reglas completas, con su porqué, en <a href="../voz/redaccion.md">voz/redaccion.md</a>.</p>
