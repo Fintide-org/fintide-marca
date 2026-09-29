@@ -74,22 +74,38 @@ const EN_MONOREPO = {
 const huella = async (archivo) => createHash('sha256').update(await readFile(archivo)).digest('hex')
 
 /**
- * Si dos piezas son la misma. Los PNG se comparan por lo que se ve —medidas,
- * canales y cada valor de pixel— y no por sus bytes: la compresión de sharp no
- * escribe los mismos bytes en macOS que en Linux aunque la imagen sea idéntica,
- * y comparar bytes pondría el CI en rojo sin que nada hubiera cambiado. Todo lo
- * demás (SVG, ICO, CSS, HTML, fuentes) sí se compara byte a byte.
+ * Si dos piezas son la misma: `'igual'`, `'redondeo'` o `'distinta'`.
+ *
+ * Los PNG se comparan por lo que se ve —medidas, canales y cada valor de
+ * pixel— y no por sus bytes: la compresión de sharp no escribe los mismos
+ * bytes en macOS que en Linux aunque la imagen sea idéntica.
+ *
+ * Y la ampliación de libvips redondea distinto en x86 que en ARM: los tres
+ * iconos que se generan agrandando el símbolo (192, 512 y maskable) salen con
+ * diferencias de hasta 36 niveles en los bordes. Las piezas se generan en ARM
+ * —Apple Silicon, y el CI corre en `macos-latest` para comparar exacto—; fuera
+ * de ARM, una diferencia de hasta TOLERANCIA_X86 niveles se informa como
+ * redondeo y no como rojo. Un retoque a mano de verdad la rebasa: la prueba de
+ * `probar()` pinta un cuadro coral y sale en rojo en las dos arquitecturas.
+ *
+ * Todo lo que no es PNG (SVG, ICO, CSS, HTML, fuentes) se compara byte a byte.
  */
+const TOLERANCIA_X86 = 40
+
 async function igual(a, b) {
-  if (!a.endsWith('.png')) return (await huella(a)) === (await huella(b))
+  if (!a.endsWith('.png')) return (await huella(a)) === (await huella(b)) ? 'igual' : 'distinta'
   const [x, y] = await Promise.all([a, b].map((f) => sharp(f).raw().toBuffer({ resolveWithObject: true })))
-  return (
-    x.info.width === y.info.width &&
-    x.info.height === y.info.height &&
-    x.info.channels === y.info.channels &&
-    x.data.equals(y.data)
-  )
+  if (x.info.width !== y.info.width || x.info.height !== y.info.height || x.info.channels !== y.info.channels) {
+    return 'distinta'
+  }
+  if (x.data.equals(y.data)) return 'igual'
+  if (process.arch === 'arm64') return 'distinta'
+  let maxima = 0
+  for (let i = 0; i < x.data.length; i++) maxima = Math.max(maxima, Math.abs(x.data[i] - y.data[i]))
+  return maxima <= TOLERANCIA_X86 ? 'redondeo' : 'distinta'
 }
+
+const avisos = []
 
 /** Regla 1. Devuelve la lista de piezas que no salen idénticas de sus guiones. */
 export async function reproducibilidad(raiz = RAIZ) {
@@ -105,9 +121,9 @@ export async function reproducibilidad(raiz = RAIZ) {
     }
     const fallos = []
     for (const pieza of DERIVADAS) {
-      if (!(await igual(path.join(raiz, pieza), path.join(copia, pieza)))) {
-        fallos.push(`${pieza}: no sale igual de su guion (¿se editó a mano?)`)
-      }
+      const r = await igual(path.join(raiz, pieza), path.join(copia, pieza))
+      if (r === 'distinta') fallos.push(`${pieza}: no sale igual de su guion (¿se editó a mano?)`)
+      if (r === 'redondeo' && raiz === RAIZ) avisos.push(`${pieza}: difiere solo por redondeo de ${process.arch}`)
     }
     return fallos
   } finally {
@@ -144,7 +160,7 @@ export async function deriva(monorepo, raiz = RAIZ) {
   for (const [pieza, suya] of Object.entries(EN_MONOREPO)) {
     const destino = path.join(monorepo, suya)
     if (!existsSync(destino)) fallos.push(`${pieza}: el monorepo ya no tiene ${suya}`)
-    else if (!(await igual(path.join(raiz, pieza), destino))) {
+    else if ((await igual(path.join(raiz, pieza), destino)) === 'distinta') {
       fallos.push(`${pieza}: distinta de ${suya}`)
     }
   }
@@ -201,8 +217,13 @@ async function main() {
 
   console.log('==> Reproducibilidad')
   const r = await reproducibilidad()
-  if (r.length === 0) console.log(`  [ok]   ${DERIVADAS.length} piezas salen idénticas de sus guiones`)
+  const redondeo = new Set(avisos).size
+  if (r.length === 0 && redondeo === 0) console.log(`  [ok]   ${DERIVADAS.length} piezas salen idénticas de sus guiones`)
+  if (r.length === 0 && redondeo > 0) {
+    console.log(`  [ok]   ${DERIVADAS.length} piezas salen de sus guiones; ${redondeo} solo con redondeo de ${process.arch}`)
+  }
   for (const f of r) console.log(`  [rojo] ${f}`)
+  for (const f of [...new Set(avisos)]) console.log(`  [aviso] ${f}`)
   rojo ||= r.length > 0
 
   console.log('==> Deriva con el monorepo')
