@@ -56,6 +56,7 @@
   .fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.5rem; display: block; }
   .fotos figcaption { font-size: 0.75rem; color: var(--tenue); margin-top: 4px; overflow-wrap: anywhere; }
   .tarjetas img { aspect-ratio: 1200 / 630; }
+  .capturas img { aspect-ratio: 3 / 4; object-position: top; }
   @media (max-width: 720px) { .escala { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   code { font-size: 0.875em; background: #F2FAFA; padding: 1px 5px; border-radius: 4px; }
   a { color: var(--marca); }
@@ -91,6 +92,11 @@
 <h3>Estados</h3>
 <p class="uso">Estados semánticos de cartera (al corriente, en aviso, en riesgo), para insignias y gráficas. No son colores de marca.</p>
 <div class="escala" style="--pasos:3"><div class="muestra" style="background:#ECFDF5;color:#182424"><b>exito-50</b><span>#ECFDF5</span></div><div class="muestra" style="background:#059669;color:#FFFFFF"><b>exito-600</b><span>#059669</span></div><div class="muestra" style="background:#047857;color:#FFFFFF"><b>exito-700</b><span>#047857</span></div></div><div style="height:8px"></div><div class="escala" style="--pasos:3"><div class="muestra" style="background:#FFFBEB;color:#182424"><b>aviso-50</b><span>#FFFBEB</span></div><div class="muestra" style="background:#D97706;color:#FFFFFF"><b>aviso-600</b><span>#D97706</span></div><div class="muestra" style="background:#B45309;color:#FFFFFF"><b>aviso-700</b><span>#B45309</span></div></div><div style="height:8px"></div><div class="escala" style="--pasos:3"><div class="muestra" style="background:#FEF2F2;color:#182424"><b>riesgo-50</b><span>#FEF2F2</span></div><div class="muestra" style="background:#DC2626;color:#FFFFFF"><b>riesgo-600</b><span>#DC2626</span></div><div class="muestra" style="background:#B91C1C;color:#FFFFFF"><b>riesgo-700</b><span>#B91C1C</span></div></div>
+
+<h3>Gráficas</h3>
+<p class="uso">Paleta de las gráficas de los reportes del back office (`components/reportes/paleta.ts` en el monorepo). La serie principal va en teal-900, la secundaria en teal-600, el acento en coral-500 y los estados con los semánticos.</p>
+<div class="escala" style="--pasos:10"><div class="muestra" style="background:#0D5152;color:#FFFFFF"><b>grafica-principal</b><span>#0D5152</span></div><div class="muestra" style="background:#03A6A6;color:#FFFFFF"><b>grafica-secundario</b><span>#03A6A6</span></div><div class="muestra" style="background:#A0CDCD;color:#182424"><b>grafica-claro</b><span>#A0CDCD</span></div><div class="muestra" style="background:#F27457;color:#FFFFFF"><b>grafica-acento</b><span>#F27457</span></div><div class="muestra" style="background:#059669;color:#FFFFFF"><b>grafica-exito</b><span>#059669</span></div><div class="muestra" style="background:#D97706;color:#FFFFFF"><b>grafica-aviso</b><span>#D97706</span></div><div class="muestra" style="background:#DC2626;color:#FFFFFF"><b>grafica-riesgo</b><span>#DC2626</span></div><div class="muestra" style="background:#CBD5E1;color:#182424"><b>grafica-neutro</b><span>#CBD5E1</span></div><div class="muestra" style="background:#E2E8F0;color:#182424"><b>grafica-malla</b><span>#E2E8F0</span></div><div class="muestra" style="background:#64748B;color:#FFFFFF"><b>grafica-texto</b><span>#64748B</span></div></div>
+<p class="uso" style="margin-top:8px"><b>Pendiente:</b> neutro, malla y texto son el slate de Tailwind por omisión (#CBD5E1, #E2E8F0, #64748B), que tira a azul: justo el gris que la marca sustituyó por su neutro. Los de marca equivalentes serían slate-300 #C2D3D3, slate-200 #DCE7E7 y slate-500 #607373. Se registra como está hasta que se decida cambiarlo en el producto.</p>
 
 <h3>Degradados</h3>
 <p class="uso">La capa líquida: superficies con brillo que dan al producto el acabado del sitio público. Van a 135°.</p>
@@ -137,6 +143,21 @@
 <figure><img src="../tarjetas-sociales/compuestas/empresas-nosotros-v1.jpg" alt="" loading="lazy"><figcaption>empresas-nosotros-v1.jpg</figcaption></figure>
 <figure><img src="../tarjetas-sociales/compuestas/empresas-precios-v1.jpg" alt="" loading="lazy"><figcaption>empresas-precios-v1.jpg</figcaption></figure>
 <figure><img src="../tarjetas-sociales/compuestas/empresas-servicios-v1.jpg" alt="" loading="lazy"><figcaption>empresas-servicios-v1.jpg</figcaption></figure>
+</div>
+
+<h2>La marca aplicada</h2>
+<p class="uso">Los dos sitios públicos tal como estaban el 2026-09-29, en escritorio. Las de celular y las de agosto están en <code>aplicaciones/</code>.</p>
+<div class="fotos capturas">
+<figure><a href="../aplicaciones/sitios-2026-09-29/colaboradores-como-funciona-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/colaboradores-como-funciona-escritorio.jpg" alt="" loading="lazy"></a><figcaption>colaboradores-como-funciona</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/colaboradores-costo-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/colaboradores-costo-escritorio.jpg" alt="" loading="lazy"></a><figcaption>colaboradores-costo</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/colaboradores-inicio-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/colaboradores-inicio-escritorio.jpg" alt="" loading="lazy"></a><figcaption>colaboradores-inicio</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/colaboradores-mi-empresa-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/colaboradores-mi-empresa-escritorio.jpg" alt="" loading="lazy"></a><figcaption>colaboradores-mi-empresa</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/colaboradores-preguntas-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/colaboradores-preguntas-escritorio.jpg" alt="" loading="lazy"></a><figcaption>colaboradores-preguntas</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/empresas-contacto-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/empresas-contacto-escritorio.jpg" alt="" loading="lazy"></a><figcaption>empresas-contacto</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/empresas-inicio-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/empresas-inicio-escritorio.jpg" alt="" loading="lazy"></a><figcaption>empresas-inicio</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/empresas-nosotros-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/empresas-nosotros-escritorio.jpg" alt="" loading="lazy"></a><figcaption>empresas-nosotros</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/empresas-precios-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/empresas-precios-escritorio.jpg" alt="" loading="lazy"></a><figcaption>empresas-precios</figcaption></figure>
+<figure><a href="../aplicaciones/sitios-2026-09-29/empresas-servicios-escritorio.jpg"><img src="../aplicaciones/sitios-2026-09-29/empresas-servicios-escritorio.jpg" alt="" loading="lazy"></a><figcaption>empresas-servicios</figcaption></figure>
 </div>
 
 <h2>Voz</h2>

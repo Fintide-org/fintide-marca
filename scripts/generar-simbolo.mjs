@@ -207,21 +207,53 @@ const comoPng = (imagen) => imagen.png({ palette: true, quality: 90, effort: 10 
  */
 const comoPngPlano = (imagen) => imagen.png({ palette: false, compressionLevel: 9 })
 
-/** El símbolo centrado sobre la baldosa verde azulada de marca. */
+/**
+ * El símbolo centrado sobre la baldosa verde azulada de marca.
+ *
+ * La composición se hace aquí, en enteros, y no con `composite()` de sharp. La
+ * de libvips usa instrucciones vectoriales que redondean distinto en ARM y en
+ * x86: los iconos de 192 y 512 salían con diferencias de hasta 36 niveles
+ * según la computadora que corriera el guion, y una marca que depende de la
+ * máquina donde se genera no puede ser la fuente de nadie. Redimensionar y
+ * cuantizar sí dan lo mismo en las dos, y eso se sigue haciendo con sharp.
+ *
+ * La baldosa es opaca, así que el resultado también: cada canal es
+ * `(tinta·a + fondo·(255−a) + 127) / 255` en división entera, que es
+ * `round(tinta·a/255 + fondo·(1−a/255))` sin pasar por coma flotante.
+ */
 async function baldosa(fuente, lado, margen, plano = false) {
   const interior = Math.round(lado * (1 - margen * 2))
-  const pieza = await sharp(fuente)
+  const { data: pieza, info } = await sharp(fuente)
     .resize({ width: interior, height: interior, fit: 'inside' })
-    .toBuffer()
-  return (plano ? comoPngPlano : comoPng)(
-    sharp({
-      create: {
-        width: lado,
-        height: lado,
-        channels: 4,
-        background: { r: TEAL_HONDO[0], g: TEAL_HONDO[1], b: TEAL_HONDO[2], alpha: 1 }
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  const lienzo = Buffer.alloc(lado * lado * 4)
+  for (let i = 0; i < lado * lado; i++) {
+    lienzo[i * 4] = TEAL_HONDO[0]
+    lienzo[i * 4 + 1] = TEAL_HONDO[1]
+    lienzo[i * 4 + 2] = TEAL_HONDO[2]
+    lienzo[i * 4 + 3] = 255
+  }
+  // Centrado como lo hacía `gravity: 'center'`: el pixel sobrante va del
+  // lado izquierdo y de arriba. Con `floor` el símbolo se corría un pixel y
+  // el favicon de 32 cambiaba entero.
+  const x0 = Math.ceil((lado - info.width) / 2)
+  const y0 = Math.ceil((lado - info.height) / 2)
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const s = (y * info.width + x) * 4
+      const a = pieza[s + 3]
+      if (a === 0) continue
+      const d = ((y0 + y) * lado + x0 + x) * 4
+      for (let k = 0; k < 3; k++) {
+        lienzo[d + k] = Math.floor((pieza[s + k] * a + lienzo[d + k] * (255 - a) + 127) / 255)
       }
-    }).composite([{ input: pieza, gravity: 'center' }])
+    }
+  }
+  return (plano ? comoPngPlano : comoPng)(
+    sharp(lienzo, { raw: { width: lado, height: lado, channels: 4 } })
   ).toBuffer()
 }
 
