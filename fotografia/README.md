@@ -16,8 +16,15 @@ ninguna se puede leer como un cliente real (ver `voz/redaccion.md`).
 | `vacio.jpg` | 1920×1920 | Estados vacíos del producto |
 | `empresas.jpg` | 1433×1920 | Ninguna pantalla hoy |
 | `textura.jpg` | 600×600 | Ninguna pantalla hoy |
+| `app-acceso.jpg` | 1098×1920 | App: portada de Acceso |
+| `app-inicio.jpg` | 1498×1920 | App: cabecera de Inicio |
+| `app-enviada.jpg` | 1920×1920 | App: confirmación de solicitud enviada |
+| `app-al-corriente.jpg` | 1920×1920 | App: tarjeta «Vas al corriente» |
 
-Las columnas de «dónde» describen el monorepo al 29 de septiembre de 2026.
+Las columnas de «dónde» describen el monorepo al 29 de septiembre de 2026; las
+`app-*` describen `fintide-app` al 2 de noviembre de 2026. Las `app-*` se
+hicieron con Higgsfield (Nano Banana), con las fotos de esta carpeta como
+referencia de estilo, y se ampliaron a 2K.
 
 ## Tarjetas sociales
 
